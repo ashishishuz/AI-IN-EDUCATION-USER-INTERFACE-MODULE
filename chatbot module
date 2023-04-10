@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Education Chatbot</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+margin: 0;
+padding: 0;
+font-family: Arial, sans-serif;
+background-color: #f2f2f2;
+}
+.container {
+max-width: 800px;
+margin: 0 auto;
+padding: 20px;
+background-color: white;
+box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+#chat-container {
+height: 400px;
+overflow-y: scroll;
+margin-bottom: 20px;
+}
+.user-message {
+background-color: #ddd;
+margin-bottom: 10px;
+padding: 10px;
+border-radius: 10px;
+max-width: 50%;
+}
+.bot-message {
+background-color: #007bff;
+color: white;
+margin-bottom: 10px;
+padding: 10px;
+border-radius: 10px;
+max-width: 50%;
+align-self: flex-end;
+}
+.message-input {
+width: 100%;
+padding: 10px;
+border: none;
+border-radius: 5px;
+margin-bottom: 10px;
+}
+.send-button {
+background-color: #007bff;
+color: white;
+border: none;
+border-radius: 5px;
+padding: 10px;
+cursor: pointer;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>AI Education Chatbot</h1>
+<div id="chat-container"></div>
+<form onsubmit="return false;">
+<input type="text" id="message-input" class="message-input" placeholder="Type your message here...">
+<button type="submit" class="send-button" onclick="sendMessageToBot()">Send</button>
+</form>
+</div>
+<script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+<script>
+function sendMessageToBot() {
+const message = document.getElementById("message-input").value;
+if (message.length > 0) {
+const userMessage = document.createElement("div");
+userMessage.classList.add("user-message");
+userMessage.innerText = message;
+document.getElementById("chat-container").appendChild(userMessage);
+document.getElementById("message-input").value = "";
+
+const botMessage = document.createElement("div");
+botMessage.classList.add("bot-message");
+botMessage.innerText = "Thinking...";
+document.getElementById("chat-container").appendChild(botMessage);
+
+// Call Dialogflow API to get bot response
+const requestOptions = {
+method: "POST",
+headers: {
+"Content-Type": "application/json",
+},
+body: JSON.stringify({ message: message }),
+};
+fetch("/dialogflow", requestOptions)
+.then((response) => response.json())
+.then((data) => {
+botMessage.innerText = data.response;
+document.getElementById("chat-container").appendChild(botMessage);
+})
+.catch((
